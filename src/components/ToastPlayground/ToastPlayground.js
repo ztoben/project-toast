@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import Button from '../Button';
 
@@ -12,6 +12,20 @@ function ToastPlayground() {
   const {toasts, popToast, removeToast} = React.useContext(ToastContext);
   const [message, setMessage] = React.useState('');
   const [selectedVariant, setSelectedVariant] = React.useState(VARIANT_OPTIONS[0]);
+
+  // use effect to add keyboard esc listener to dismiss all toasts
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        toasts.forEach((toast, idx) => removeToast(idx));
+      }
+    }
+    document.addEventListener('keydown', handleEsc);
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    }
+  }, []);
 
   const handleVariantChange = (event) => {
     setSelectedVariant(event.target.value);
